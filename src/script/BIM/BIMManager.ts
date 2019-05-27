@@ -9,7 +9,7 @@ import LabelUpdatPos from "../Component/LabelUpdate";
 
 /**
  * BIM管理类，用于加载、初始化模型；模型打包格式为.lh文件，以层为单位
- * 
+ * 颜色记录也在此
  */
 
 export default class BIMManager{
