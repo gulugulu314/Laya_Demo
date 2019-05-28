@@ -179,10 +179,11 @@ export default class UITree{
             }
         });
 
+        let treeItemHeight = treelist[0].TreeItem.height;
         for(let i = 0;i<treelist.length;i++){
-            treelist[i].TreeItem.y = i * 50;
+            treelist[i].TreeItem.y = i * treeItemHeight;
         }            
-        this.m_tree.height = treelist.length * 50;
+        this.m_tree.height = treelist.length * treeItemHeight;
     }
 
     private ClearTreeItemDic(){

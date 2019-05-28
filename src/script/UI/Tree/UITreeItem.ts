@@ -64,8 +64,8 @@ export default class UITreeItem{
 
         this.CreateArrow();
         this.CreateCheckBox();
-        this.CreateLabel();
-        this.CreateHBox();
+        this.CreateLabel();  
+        this.CreateHBox();  
     }
 
     public SetTreeItemStyle(style?:TreeItemStyle){
@@ -114,9 +114,10 @@ export default class UITreeItem{
     private CreateHBox(intentLevel?:number){
         this.TreeItem = new Laya.HBox();
         this.TreeItem.name = "treeItem";
+        this.TreeItem.x = 5;
+        this.TreeItem.width = this.m_treeItemWidth;
+        this.TreeItem.height =  this.m_treeItemHeight;
         this.TreeItem.space = this.m_treeItemInnerSpace;
-        this.TreeItem.width = this.m_treeItemWidth
-        this.TreeItem.height =  this.m_treeItemHeight
         if(this.m_treeItemBgColor.length>7){
             this.m_treeItemBgColor = this.m_treeItemBgColor.substr(0,7) + "00";
         }
@@ -134,9 +135,9 @@ export default class UITreeItem{
     private CreateArrow(){
         let arrowRes = "tree/arrow.png";
         this.Arrow = new Laya.Clip(arrowRes,1,2);
-        this.Arrow.width = this.m_treeItemHeight - 20;
-        this.Arrow.height = this.m_treeItemHeight - 20;
-        this.Arrow.y = 10;
+        this.Arrow.width = this.m_treeItemHeight > 20 ? this.m_treeItemHeight - 20 : this.m_treeItemHeight;
+        this.Arrow.height =  this.m_treeItemHeight > 20 ? this.m_treeItemHeight - 20 : this.m_treeItemHeight;
+        this.Arrow.y = this.m_treeItemHeight > 20? 10 : 0;
         this.Arrow.clipY = 2;
         this.Arrow.name = "arrow";
 
@@ -151,15 +152,16 @@ export default class UITreeItem{
             if(this.OnArrowClick)
                 this.OnArrowClick(this,this.ItemData.arrowStatus);
         });
+
         Laya.stage.addChild(this.Arrow);      
     }
 
     /******************CheckBox************************************************************/
     private CreateCheckBox(){
         this.CheckBox = new Laya.Clip("tree/checkbox.png",1,2);
-        this.CheckBox.width = this.m_treeItemHeight - 20;
-        this.CheckBox.height = this.m_treeItemHeight - 20;
-        this.CheckBox.y = 10
+        this.CheckBox.width = this.m_treeItemHeight > 20 ? this.m_treeItemHeight - 20 : this.m_treeItemHeight;
+        this.CheckBox.height = this.m_treeItemHeight > 20 ? this.m_treeItemHeight - 20 : this.m_treeItemHeight;
+        this.CheckBox.y = this.m_treeItemHeight > 20? 10 : 0;
         this.CheckBox.clipY = 3;
         this.CheckBox.name = "checkbox";
 
@@ -188,7 +190,6 @@ export default class UITreeItem{
         this.Label.color = this.m_labelColor;
 
         this.SetContent(this.ItemData.name);
-
         Laya.stage.addChild(this.Label);
     }
 }
