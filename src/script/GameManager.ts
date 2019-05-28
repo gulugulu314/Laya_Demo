@@ -58,6 +58,8 @@ export default class GameManager{
     OnLevelBtnClicked(levelName:string){
         this.BIM.HideOneLevelFloors(this.BIM.CurrenLevel);
         this.BIM.ShowOneLevelFloors(levelName);
+
+        this.MainUI.CreateTree(this.Data.GetOneLevelOrganizations(this.BIM.CurrenLevel));
     }
 
     public Login(){   

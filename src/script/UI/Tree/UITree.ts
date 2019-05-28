@@ -31,19 +31,21 @@ export default class UITree{
 
             this.ClearTreeItemDic();
 
-            //Temp，用VBox制作一个Tree
-            this.m_tree = new Laya.VBox();
-            this.m_tree.x = treePos==null?0:treePos.x;
-            this.m_tree.y = treePos==null?0:treePos.y;
-            this.m_tree.bgColor = treeBgColor == null?"#ffffff":treeBgColor;
-
-            if(treeBgColor != null){
-                if(style == null) style = new TreeItemStyle();          
-                style.ItemColor = treeBgColor;
+            if(this.m_tree ==null){
+                //Temp，用VBox制作一个Tree
+                this.m_tree = new Laya.VBox();
+                this.m_tree.x = treePos==null?0:treePos.x;
+                this.m_tree.y = treePos==null?0:treePos.y;
+                this.m_tree.bgColor = treeBgColor == null?"#ffffff":treeBgColor;
+                Laya.stage.addChild(this.m_tree);
             }
 
-            Laya.stage.addChild(this.m_tree);
-            
+            if(treeBgColor != null){
+                if(style == null) 
+                    style = new TreeItemStyle();          
+                style.ItemColor = treeBgColor;
+            }
+ 
             items.forEach(element => {
                 this.AddItem(element,style);
             });
@@ -169,6 +171,7 @@ export default class UITree{
 
     private RefreshItemPosition(){
         let treelist = new Array<UITreeItem>();
+        treelist.splice(0);
         this.m_ItemCodes.forEach(element => {
             let item = this.m_treeItemsDic.get(element) as UITreeItem;
             if(item.TreeItem.visible){
@@ -184,8 +187,12 @@ export default class UITree{
 
     private ClearTreeItemDic(){
         this.m_ItemCodes.forEach(element => {
-            if(this.m_treeItemsDic.has(element))
+            if(this.m_treeItemsDic.has(element)){
+                let item:UITreeItem = this.m_treeItemsDic.get(element);
+                item.TreeItem.destroy();
                 this.m_treeItemsDic.del(element);
+            } 
         });
+        this.m_ItemCodes.splice(0);
     }
 }

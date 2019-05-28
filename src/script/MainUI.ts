@@ -215,8 +215,15 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
     m_orgLevel1:Laya.WeakObject = new Laya.WeakObject();
     m_orgLevel2:Laya.WeakObject = new Laya.WeakObject();
     m_level1arrs:Array<string> = new Array<string>();
+    m_level2arrs:Array<string> = new Array<string>();
+
+    uitree:UITree = new UITree();
+    treedata:Array<TreeItemData> = new Array<TreeItemData>();
+
     CreateTree(orgs:Array<string>){
         //TEMP:默认为3级
+
+        this.cleardic();
 
         let level1:string;
         let level2:string;
@@ -254,20 +261,17 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
     
                     if(!this.m_orgLevel2.has(level2)) {
                         this.m_orgLevel2.set(level2,new Array<string>());
+                        this.m_level2arrs.push(level2);
                     }
                     let b3 = this.m_orgLevel2.get(level2).some((code):boolean =>{return code == level3});
                     if(!b3) this.m_orgLevel2.get(level2).push(level3);          
                 break;
             }
         });
-        
-        
-        let uitree = new UITree();
-        let treedata:Array<TreeItemData> = new Array<TreeItemData>();
 
         this.m_level1arrs.forEach(lvl1 => {
             let root:TreeItemData = this.createTreeItem(lvl1,GameManager.Instance().Data.GetOneOrganizationName(lvl1),1,false,null);
-            treedata.push(root);
+            this.treedata.push(root);
 
             this.m_orgLevel1.get(lvl1).forEach(lvl2 => {
                 let isleaf = (!this.m_orgLevel2.has(lvl2) || this.m_orgLevel2.get(lvl2).length == 0)?true:false;
@@ -283,8 +287,8 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
             });           
         });
 
-        uitree.InitTree(treedata,null,new Laya.Vector2(Laya.Browser.width - 500,10),"#FFD700");
-        uitree.OnValueChanged =(data,b)=>{
+        this.uitree.InitTree(this.treedata,null,new Laya.Vector2(Laya.Browser.width - 500,10),"#FFD700");
+        this.uitree.OnValueChanged =(data,b)=>{
             this.OnValueChanged(data,b);
         } 
     }
@@ -308,5 +312,17 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
         });
 
         EventManager.Instance().PostEvent(Events.OnDepTreeItemClicked.toString(),[str,b]);
+    }
+
+    cleardic(){
+        this.m_level1arrs.forEach(element => {
+            this.m_orgLevel1.del(element);
+        });
+        this.m_level1arrs.splice(0);
+        this.m_level2arrs.forEach(element => {
+            this.m_orgLevel2.del(element);
+        });
+        this.m_level2arrs.splice(0);
+        this.treedata.splice(0);
     }
 }
