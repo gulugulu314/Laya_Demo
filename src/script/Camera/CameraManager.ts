@@ -7,6 +7,7 @@ import { Events } from "../Events/Events";
 import CameraMoveScript from "../Component/CameraMoveScript";
 import RaySelector from "../Component/RaySelector";
 import LightControl from "../Component/LightControl";
+import MtTween from "../Common/MtTween";
 
 
 export default class CameraManager{
@@ -68,28 +69,18 @@ export default class CameraManager{
         this.Is2D = is2D;
         var component = this.Camera.getComponent(CameraMoveScript) as CameraMoveScript;
         if(is2D){
-            this.Camera.orthographic = true;
-            this.Camera.orthographicVerticalSize = 60;
-            this.Camera.transform.position = this._2dPos;
-            this.Camera.transform.localRotationEuler = this._2dRot;
-            component.Is2D = true;
-
-            // Laya.Tween.to(this.Camera,{position:this._2dPos,rotation:this._2dRot},1000,null,Handler.create(this,()=>{
-            //     this.Camera.orthographic = true;
-            //     this.Camera.orthographicVerticalSize = 60;
-            //     component.Is2D = true;
-            // }));
-
+            MtTween.Rotate(this.Camera,this._2dRot,100);
+            MtTween.Move(this.Camera,this._2dPos,100,null,Laya.Handler.create(this,()=>{
+                this.Camera.orthographic = true;
+                this.Camera.orthographicVerticalSize = 60;
+                component.Is2D = true;
+            }));
         }else{
-            this.Camera.orthographic = false;
-            this.Camera.transform.position = this._3dPos;
-            this.Camera.transform.localRotationEuler = this._3dRot;
-            component.Is2D = false;
-
-            // Laya.Tween.to(this.Camera,{position:this._3dPos,rotation:this._3dRot},1000,null,Handler.create(this,()=>{
-            //     this.Camera.orthographic = false;
-            //     component.Is2D = false;
-            // }));
+            MtTween.Rotate(this.Camera,this._3dRot,100);
+            MtTween.Move(this.Camera,this._3dPos,100,null,Laya.Handler.create(this,()=>{
+                this.Camera.orthographic = false;
+                component.Is2D = false;
+            }));            
         }
     }
 
