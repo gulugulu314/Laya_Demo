@@ -20,6 +20,7 @@ export default class BIMManager{
     private m_spaceDic:Laya.WeakObject;
     private m_levelSpsceDic:Laya.WeakObject;
     private m_levelRes:Laya.WeakObject;
+    private m_levelAllMeshSprite3Ds:Laya.WeakObject;
 
     private m_3dlabelDisappearDistance:number = 80;
     private m_3dlabelTotalDisappearDistance:number = 180;
@@ -33,13 +34,28 @@ export default class BIMManager{
         this.m_levelSpsceDic = new Laya.WeakObject();
         this.m_levelRes = new Laya.WeakObject();
         this.Levels = new Array<string>();
+        this.m_levelAllMeshSprite3Ds = new Laya.WeakObject();
 
         this.AddEvents();
     }
 
+    
     AddEvents(){
         EventManager.Instance().AddEventListener(Events.OnCameraDistanceChanged.toString(),this,this.ShowHideTagsByDistance);
         EventManager.Instance().AddEventListener(Events.OnDepTreeItemClicked.toString(),this,this.SetOneLevelFloorColor);
+
+        let isReset = true;
+        //TEMP:
+        Laya.stage.on(Laya.Event.KEY_DOWN,this,(e:Laya.Event)=>{
+            if(e.keyCode == Laya.Keyboard.SPACE){
+                isReset = !isReset;
+                if(isReset){
+                    this.SetOneFloorOpacity(1);
+                }else{
+                    this.SetOneFloorOpacity(0.2);
+                }
+            }
+        })
     }
 
     /** 
@@ -62,15 +78,15 @@ export default class BIMManager{
             //将资源加入场景
             GameManager.Instance().MainScene.addChild(res);
 
-            //遍历所有资源
-            this.TravelMeshSprite3D(res);
-
-            //资源默认隐藏
-            res.active = false;
-
             //获得所有楼层
             var level = Common.ParseLoadLevel(url);
             this.Levels.push(level);
+
+            //遍历所有资源
+            this.TravelMeshSprite3D(res,level);
+
+            //资源默认隐藏
+            res.active = false;
 
             //记录当前楼层资源
             if(!this.m_levelRes.has(level)){
@@ -230,7 +246,7 @@ export default class BIMManager{
     }
 
     
-    private TravelMeshSprite3D(parent:Laya.Sprite3D){
+    private TravelMeshSprite3D(parent:Laya.Sprite3D,level:string){
         if(parent== null) return;
         
         for(var i = 0;i<parent._children.length;i++){
@@ -238,13 +254,17 @@ export default class BIMManager{
             var meshSprite3D : Laya.MeshSprite3D = parent.getChildAt(i) as Laya.MeshSprite3D;
 
             if(meshSprite3D != null){
-                if(meshSprite3D.meshFilter!=null 
-                    && meshSprite3D.parent.name == NameConfig.floor){
+                if(meshSprite3D.meshFilter!=null ){
 
-                    this.InstantiateFloorItem(meshSprite3D);
+                    if(meshSprite3D.parent.name == NameConfig.floor)
+                        this.InstantiateFloorItem(meshSprite3D);
 
+                    if(!this.m_levelAllMeshSprite3Ds.has(level)){
+                        this.m_levelAllMeshSprite3Ds.set(level,new Array<Laya.MeshSprite3D>());
+                    }
+                    this.m_levelAllMeshSprite3Ds.get(level).push(meshSprite3D);
                 }else{
-                    this.TravelMeshSprite3D(meshSprite3D);
+                    this.TravelMeshSprite3D(meshSprite3D,level);
                 }     
             } 
         }
@@ -370,6 +390,20 @@ export default class BIMManager{
             }
         });
     }
+
+
+    SetOneFloorOpacity(value:number,level?:string){
+        level = level == null?this.CurrenLevel:level;
+
+        if(!this.m_levelAllMeshSprite3Ds.has(level))return ;
+
+        let meshes = this.m_levelAllMeshSprite3Ds.get(level);
+
+        meshes.forEach(element => {
+            Common.SetOpacity(element,value);
+        });
+    }
+
 
 
     /**

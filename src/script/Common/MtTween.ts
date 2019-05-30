@@ -114,13 +114,37 @@ export default class MtTween{
                         this.meshRenderer.material.albedoColor = albedo;
                     })
                 },duration,ease,Handler.create(target,()=>{
-                    if(!tween.repeat) mat.renderMode = Laya.BlinnPhongMaterial.RENDERMODE_OPAQUE;
+                    if(aplha == 1) mat.renderMode = Laya.BlinnPhongMaterial.RENDERMODE_OPAQUE;
                     if(complete) complete.run();
                 }),delay,coverBefore,autoRecover);   
                 return tween;
             }
         }
         return null;
+    }
+
+    static MultiAlpha(target:MeshSprite3D,aplha:number,duration:number,ease?:Function,complete?:Handler,delay?:number,coverBefore?:boolean,autoRecover?:boolean){
+        if(target == null) return;
+        let render:Laya.MeshRenderer = target.meshRenderer;
+        if(render && render.materials){
+
+            for(let i=0;i<render.materials.length;i++){
+                let mat:Laya.BlinnPhongMaterial = render.materials[i]  as Laya.BlinnPhongMaterial;
+                mat.renderMode = Laya.BlinnPhongMaterial.RENDERMODE_TRANSPARENT;
+                let albedo = mat.albedoColor;
+                if(albedo){
+                    let tween = Laya.Tween.to(albedo,{ 
+                        w:aplha,
+                        update:new Handler(target,function(){
+                            this.meshRenderer.materials[i].albedoColor = albedo;
+                        })
+                    },duration,ease,Handler.create(target,()=>{
+                        if(aplha == 1 ) mat.renderMode = Laya.BlinnPhongMaterial.RENDERMODE_OPAQUE;
+                        if(complete) complete.run();
+                    }),delay,coverBefore,autoRecover);    
+                }
+            }
+        }
     }
 }
 

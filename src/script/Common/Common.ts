@@ -1,5 +1,13 @@
+import MtTween from "./MtTween";
 
 export default class Common{
+
+    static SetOpacity(target:Laya.MeshSprite3D,value:number,duration?:number){
+        if(target == null) return ;
+        duration = duration == null?100:duration;
+        //MtTween.Alpha(target,value,duration);
+        MtTween.MultiAlpha(target,value,duration);
+    }
 
 
     /**
