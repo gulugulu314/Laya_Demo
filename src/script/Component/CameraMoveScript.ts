@@ -45,7 +45,6 @@ export default class CameraMoveScript extends Laya.Script3D {
     public OnSingleFingerDrag:Function;
     public OnDoubleFingersPinch:Function;
     public OnDoubleFingersTwist:Function;
-    public On
    
     private m_forwardLength: number = 3;
     private m_lookAtPoint: Vector3 = new Vector3();
@@ -131,7 +130,7 @@ export default class CameraMoveScript extends Laya.Script3D {
             this.m_2dMoveSpeed = 0.02;
             this.m_2dWheelSpeed = 2;
     
-            this.m_3dMinZoomDistance = -30;
+            this.m_3dMinZoomDistance = -10;
             this.m_3dMaxZoomDistance = 1000;
             this.m_3dMinCameraPitchRadian = 10 * Math.PI / 180; 
             this.m_3dMaxCameraPitchRadian = 90 * Math.PI / 180;
@@ -145,7 +144,7 @@ export default class CameraMoveScript extends Laya.Script3D {
             this.m_2dMoveSpeed = 0.02;
             this.m_2dWheelSpeed = 2;
     
-            this.m_3dMinZoomDistance = -30;
+            this.m_3dMinZoomDistance = -10;
             this.m_3dMaxZoomDistance = 1000;
             this.m_3dMinCameraPitchRadian = 10 * Math.PI / 180; 
             this.m_3dMaxCameraPitchRadian = 90 * Math.PI / 180;

@@ -16,6 +16,7 @@ export default class BIMManager{
 
     public Levels:Array<string>;
     public CurrenLevel:string;
+    public PreLevel:string;
 
     private m_spaceDic:Laya.WeakObject;
     private m_levelSpsceDic:Laya.WeakObject;
@@ -167,6 +168,8 @@ export default class BIMManager{
     ShowOneLevelFloors(level:string,isShowAll?:boolean){
         if(level == null)
             return;
+
+        this.PreLevel = this.CurrenLevel == null?this.Levels[0]:this.CurrenLevel;
 
         //开启levelRoot
         if(this.m_levelRes.has(level)){

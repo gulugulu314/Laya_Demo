@@ -59,6 +59,8 @@ export default class GameManager{
         this.BIM.HideOneLevelFloors(this.BIM.CurrenLevel);
         this.BIM.ShowOneLevelFloors(levelName);
 
+        EventManager.Instance().PostEvent(Events.OnLevelChanged.toString(),[this.BIM.CurrenLevel,this.BIM.PreLevel]);
+
         this.MainUI.CreateTree(this.Data.GetOneLevelOrganizations(this.BIM.CurrenLevel));
     }
 
@@ -136,7 +138,7 @@ export default class GameManager{
         Laya.stage.addChild(this.MainUI);
 
 
-        this.MainUI.CreateTree(this.Data.GetOneLevelOrganizations(this.BIM.CurrenLevel));
+        //this.MainUI.CreateTree(this.Data.GetOneLevelOrganizations(this.BIM.CurrenLevel));
         this.MainUI.CreateLevels(this.BIM.Levels);
     }
 

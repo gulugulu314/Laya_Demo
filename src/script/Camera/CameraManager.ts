@@ -22,12 +22,22 @@ export default class CameraManager{
     private _2dRot:Vector3;
     private _oriOrthSize;
 
+    //temp
+    private _levelDistance = 3;
+
     constructor(){
         this._3dPos = new Vector3(-6,45,17);
         this._3dRot = new Vector3(-78,0,0);
         this._2dPos = new Vector3(-5,50,17);
         this._2dRot = new Vector3(-90,0,0);
         this._oriOrthSize = 70;
+
+        this.AddEvents();
+    }
+
+    AddEvents(){
+        EventManager.Instance().AddEventListener(Events.OnLevelChanged.toString(),this,this.OnLevelBtnClicked);
+
     }
 
     InitCamera(){
@@ -70,33 +80,30 @@ export default class CameraManager{
         var component = this.Camera.getComponent(CameraMoveScript) as CameraMoveScript;
         if(is2D){
             MtTween.Rotate(this.Camera,this._2dRot,100);
-            MtTween.Move(this.Camera,this._2dPos,100,null,Laya.Handler.create(this,()=>{
+            MtTween.Move(this.Camera,this._2dPos,500,null,Laya.Handler.create(this,()=>{
                 this.Camera.orthographic = true;
                 this.Camera.orthographicVerticalSize = 60;
                 component.Is2D = true;
             }));
         }else{
             MtTween.Rotate(this.Camera,this._3dRot,100);
-            MtTween.Move(this.Camera,this._3dPos,100,null,Laya.Handler.create(this,()=>{
+            MtTween.Move(this.Camera,this._3dPos,500,null,Laya.Handler.create(this,()=>{
                 this.Camera.orthographic = false;
                 component.Is2D = false;
             }));            
         }
     }
 
-    CameraMove(object:Object, fromPos:Vector3,toPos:Vector3){
-        
-    }
 
-    CameraRotate(fromRotate:Vector3,toRotate:Vector3){
+    OnLevelBtnClicked(curLevel:string,preLevel:string){
+        let distance = 0;
+        let toPos = this.Camera.transform.position;
+        if(curLevel == preLevel) distance = 0;
+        let levels = GameManager.Instance().MainUI.LevelNames;
+        distance = (levels.indexOf(curLevel) - levels.indexOf(preLevel)) * this._levelDistance;
+        toPos = new Laya.Vector3(toPos.x,toPos.y + distance,toPos.z);
+        MtTween.Move(this.Camera,toPos,500,null,Laya.Handler.create(this,()=>{
 
-    }
-
-    AddEvent(){
-        EventManager.Instance().AddEventListener(Events.OnUI_LevelBtn_Clicked.toString(),this,this.CameraMoveInLevel);
-    }
-
-    CameraMoveInLevel(levelName:string){
-
+        }))
     }
 }

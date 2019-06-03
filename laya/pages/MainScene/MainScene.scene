@@ -2,11 +2,11 @@
     "x":0,
     "type":"Scene",
     "selectedBox":2,
-    "selecteID":95,
+    "selecteID":99,
     "searchKey":"Scene",
     "props":{"width":600,"sceneColor":"#000000","height":900},
     "nodeParent":-1,
-    "maxID":97,
+    "maxID":100,
     "label":"Scene",
     "isOpen":true,
     "isDirectory":true,
@@ -95,6 +95,20 @@
             "isAniNode":true,
             "hasChild":false,
             "compId":26,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Button",
+            "searchKey":"Button,DistributeBtn",
+            "props":{"y":55,"x":476,"width":80,"var":"DistributeBtn","skin":"comp/button.png","labelSize":30,"label":"分布","height":60},
+            "nodeParent":2,
+            "label":"DistributeBtn",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":98,
             "child":[
                 ]
         }],

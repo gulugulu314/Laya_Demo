@@ -15,9 +15,11 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
 
     static _instance = null;
 
+    public LevelNames:Array<string>;
+
     private m_is2D:Boolean;
     private m_levelBtns:Array<Button>;
-    private m_levelPos:Laya.WeakObject;
+    private m_levelBtnPos:Laya.WeakObject;
 
     private m_levelBtnOriPos:Laya.Vector2;
 
@@ -37,7 +39,7 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
         this.m_is2D = false;
 
         this.m_levelBtns = new Array<Button>();
-        this.m_levelPos = new Laya.WeakObject();
+        this.m_levelBtnPos = new Laya.WeakObject();
 
         Laya.stage.on(Laya.Event.RESIZE,Laya.stage,()=>{
             this.UIAdapter();
@@ -59,7 +61,11 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
         this.AreaBtn.pos(100,height/3+300);
 
         this.MultiBtn.pos(width-150,height-180);    
-        this.AllBtn.pos(width-150,height-100)
+        this.AllBtn.pos(width-150,height-100);
+
+        this.DistributeBtn.pos(width-150,100);
+
+        this.uitree
 
         //重新刷新levelbtn
         if(this.m_levelBtns&&this.m_levelBtns.length!=0){
@@ -67,9 +73,9 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
             this.m_levelBtns.forEach(element => {
                 this.m_levelBtnOriPos = new Laya.Vector2(this.MultiBtn.x,this.MultiBtn.y);
                 element.pos(this.MultiBtn.x,this.MultiBtn.y - ++index * 80)
-                if(this.m_levelPos.has(element)){
-                    this.m_levelPos.del(element); 
-                    this.m_levelPos.set(element,new Laya.Vector2(element.x,element.y));
+                if(this.m_levelBtnPos.has(element)){
+                    this.m_levelBtnPos.del(element); 
+                    this.m_levelBtnPos.set(element,new Laya.Vector2(element.x,element.y));
                 }   
             });
         }
@@ -103,6 +109,12 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
             this.ShowLevels(this.m_isShowMultiBtns);
             e.stopPropagation();   
         });  
+
+        this.DistributeBtn.on(Laya.Event.CLICK,null,(e)=>{
+            this.ShowDepartmentTree();
+            e.stopPropagation();   
+        })
+
 
         this.AllBtn.on(Laya.Event.CLICK,null,(e)=>{
 
@@ -145,13 +157,13 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
             return a.charAt(14)>b.charAt(14)?1:-1;
         });
 
-        var realLevels:Array<string> = underGroundLevel.concat(upGroundLevel);
+        this.LevelNames = underGroundLevel.concat(upGroundLevel);
 
         //temp
         let index = 0;
         this.m_levelBtnOriPos = new Laya.Vector2(this.MultiBtn.x,this.MultiBtn.y);
 
-        realLevels.forEach(element => {
+        this.LevelNames.forEach(element => {
             this.CreateOneButton(element,new Laya.Vector2(this.m_levelBtnOriPos.x,this.m_levelBtnOriPos.y - ++index*80))
         });
     }
@@ -171,14 +183,14 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
         lvlBtn.label = purLevel.charAt(0)+purLevel.charAt(3);
         lvlBtn.on(Laya.Event.CLICK,null,(e,lvlName)=>{
             e.stopPropagation();
-            EventManager.Instance().PostEvent(Events.OnUI_LevelBtn_Clicked.toString(),lvlBtn.name)
+            EventManager.Instance().PostEvent(Events.OnUI_LevelBtn_Clicked.toString(),lvlBtn.name);
         })
 
         Laya.stage.addChild(lvlBtn);
 
         this.m_levelBtns.push(lvlBtn);
 
-        this.m_levelPos.set(lvlBtn,new Laya.Vector2(lvlBtn.x,lvlBtn.y));
+        this.m_levelBtnPos.set(lvlBtn,new Laya.Vector2(lvlBtn.x,lvlBtn.y));
     }
 
     ShowLevels(b:boolean){
@@ -195,7 +207,7 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
             this.MultiBtn.label = "折叠";
             this.m_levelBtns.forEach(element => {
                 element.visible = this.m_isShowMultiBtns;
-                var pos = this.m_levelPos.get(element) as Laya.Vector2;
+                var pos = this.m_levelBtnPos.get(element) as Laya.Vector2;
                 Laya.Tween.to(element,{x:pos.x,y:pos.y},50);
             });
         }
@@ -210,6 +222,19 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
             this._2D3DBtn.label = "2D";
         }
     }
+
+
+    private isShowDepartTree = false;
+    ShowDepartmentTree(){
+        this.isShowDepartTree = !this.isShowDepartTree;
+        if(this.isShowDepartTree){
+            let data:Array<string> = GameManager.Instance().Data.GetOneLevelOrganizations(GameManager.Instance().BIM.CurrenLevel);
+            this.CreateTree(data);
+        }  
+        if(this.uitree && this.uitree.m_tree )
+            this.uitree.m_tree.visible = this.isShowDepartTree;  
+    }
+    
 
 
     m_orgLevel1:Laya.WeakObject = new Laya.WeakObject();
@@ -287,7 +312,7 @@ export default class MainUI extends ui.MainScene.MainSceneUI{
             });           
         });
 
-        this.uitree.InitTree(this.treedata,null,new Laya.Vector2(Laya.Browser.width - 500,10),"#FFD700");
+        this.uitree.InitTree(this.treedata,null,new Laya.Vector2(Laya.Browser.width - 600,10),"#FFD700");
         this.uitree.OnValueChanged =(data,b)=>{
             this.OnValueChanged(data,b);
         } 

@@ -7,7 +7,7 @@ import Vector2 = Laya.Vector2;
  */
 export default class UITree{
 
-    private m_tree:Laya.VBox;
+    public m_tree:Laya.VBox;
 
     private m_ItemCodes:Array<string>;
     private m_treeItemsDic:Laya.WeakObject;
